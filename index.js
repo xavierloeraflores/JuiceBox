@@ -7,14 +7,13 @@ server.listen(PORT, ()=>{
     console.log('The server is up on port', PORT)
 })
 
+const bodyParser = require('body-parser');
+server.use (bodyParser.json())
 
-server.use((req, res, next) => {
-    console.log("<____Body Logger START____>");
-    console.log(req.body);
-    console.log("<_____Body Logger END_____>");
-  
-    next();
-});
+const morgan = require('morgan')
+server.use(morgan('dev'))
+
+
 
 server.use((req, res, next) => {
     console.log('Request:')
@@ -24,6 +23,15 @@ server.use((req, res, next) => {
 })
 
 
+server.use((req, res, next) => {
+    console.log("<____Body Logger START____>");
+    console.log(req.body);
+    console.log("<_____Body Logger END_____>");
+  
+    next();
+});
+
+
 
 server.use('/api', (req, res, next) => {
     console.log("A request was made to /api");
@@ -31,4 +39,5 @@ server.use('/api', (req, res, next) => {
 });
 
 
-
+const apiRouter = require('./api');
+server.use('/api', apiRouter);
