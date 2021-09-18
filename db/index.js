@@ -264,6 +264,15 @@ async function createTags(tagList) {
         WHERE id=$1;
       `, [postId]);
   
+      // THIS IS NEW
+      if (!post) {
+        throw {
+          name: "PostNotFoundError",
+          message: "Could not find a post with that postId"
+        };
+      }
+      // NEWNESS ENDS HERE
+  
       const { rows: tags } = await client.query(`
         SELECT tags.*
         FROM tags
@@ -304,6 +313,19 @@ async function createTags(tagList) {
     } catch (error) {
       throw error;
     }
+  }
+  async function getUserByUsername(username) {
+    try {
+      const { rows: [user] } = await client.query(`
+        SELECT *
+        FROM users
+        WHERE username=$1;
+      `, [username]);
+  
+      return user;
+    } catch (error) {
+      throw error;
+    }
   } 
 
 
@@ -319,5 +341,7 @@ module.exports = {
   getPostsByUser,
   createTags,
   addTagsToPost,
-  getPostsByTagName
+  getPostsByTagName,
+  getUserByUsername,
+  getPostById
 }
